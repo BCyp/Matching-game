@@ -10,6 +10,10 @@ function eleCreate( type, id, cl, content, child){
 	return newElement;
 
 }
+var reveal = function(card){
+	flips++;
+	this.textContent = this.getAttribute('symbol');
+};
 function genCards(numPairs){
 	var symbols = [ 1, 2 , 3 , 4 , 5, 6 , 7 , 8];
 	var deck = [];
@@ -18,7 +22,7 @@ function genCards(numPairs){
 
 		if( i == numPairs) y = 0;
 		var newCard = eleCreate('div', null, 'card', null, null);
-		newCard.style = 'width:70px;height:70px;border:1px solid #000; display: inline-block; float: center; margin: 5px';
+		newCard.style = 'width:70px;height:70px;border:1px solid #000; display: inline-block; float: left; margin: 5px; background-color : #305';
 		newCard.setAttribute('symbol', symbols[y]+ "");
 		var copyCard = newCard;
 		deck.push(newCard);
@@ -27,6 +31,7 @@ function genCards(numPairs){
 	console.log(deck);
 	return deck;
 };
+
 var shuffle = function(deck){
 	var cloneDeck = [];
 	len = deck.length;
@@ -37,6 +42,8 @@ var shuffle = function(deck){
 	}
 	return cloneDeck;
 };
+
+
 function placeCards(deck){
 	deck = shuffle(deck);
 	for(var i = 0; i < deck.length; i++){
@@ -44,7 +51,23 @@ function placeCards(deck){
 		console.log(deck[i]);
 	}
 };
+function addListener(parent){
+	for( var i = 0; i < parent.childNodes.length; i++){
+		parent.childNodes[i].addEventListener('click', reveal);
+	}
+};
+function game(){
+	var flips = 0;
+	var guesses = 0;
+	var matches = 0;
 
+	addListener(document.getElementById('gameBoard'));
+
+	while (flips < 2){
+		console.log(flips);
+	}
+
+}
 
 function main(){
 	var kar = document.getElementById('numSymbols').value; 	
@@ -57,12 +80,13 @@ function main(){
 
 	var deck = genCards(kar);
 	placeCards(deck);
+	game();
 
 	console.log(board.attributes);
 
 
 
-}
+};
 
 
 document.getElementById('startButton').addEventListener('click', main);
