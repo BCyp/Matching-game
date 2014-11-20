@@ -1,0 +1,41 @@
+body{
+	text-align: center;
+	font-size: 1.5em;
+	font-family: arial, sans-serif;
+	background-color: #aaaaaa;
+}
+
+.card{
+	width:70px;
+	height:70px;
+	border-radius: 25px;
+	text-align: center;
+	vertical-align:center;line-height: 70px; 
+	box-shadow: 10px 10px 5px #888888;border:3px solid #000; 
+	display: inline-block; float: left; margin: 5px; 
+	background-color : #ff0;
+	-moz-transition:-moz-transform 0.1s ease-in; 
+	-webkit-transition:-webkit-transform 0.1s ease-in; 
+	-o-transition:-o-transform 0.1s ease-in;
+}
+.card:hover{
+	-moz-transform:scale(1.25); 
+-webkit-transform:scale(1.25);
+-o-transform:scale(1.25);
+}
+#gameBoard{
+	margin-left: auto; margin-right: auto;
+}
+
+#end{
+	border-radius: 25px;
+	border: 5px solid #000;
+	background-color: #00f;
+	color: #ff0;
+	width: 700px;
+	height: 90px;
+	margin-right: auto;
+	margin-left: auto;
+	box-shadow: 10px 10px 5px #888888;
+	font-size: 2em;
+}

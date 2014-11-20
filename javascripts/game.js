@@ -1,32 +1,51 @@
+//*Brandon Cypel Bac369@nyu.edu *//
 
 
-
-function eleCreate( type, id, cl, content, child){
-	var newElement = document.createElement('div');
-	newElement.id = id;
-	newElement.setAttribute('class', cl);
+function elemCreate( type, obj, content, child){
+	var newElement = document.createElement(type);
+	if(obj.id){
+		newElement.id =obj.id;
+	}
+	if(obj.class){
+		newElement.setAttribute('class', obj.class);
+	}
+	if(obj.style){
+		newElement.setAttribute('style', obj.style);
+	}
+	if(child){
+		newElement.appendChild(child);
+	}
 	newElement.textContent = content;
 
 	return newElement;
 
-}
+};
+function shuffleArray(arr){
+	for( var i = 0; i < arr.length; i++){
+		var current = Math.floor(arr.length * Math.random());
+		if(i !== current){
+			var temp = arr[i];
+			arr[i] = arr[current];
+			arr[current] = temp;
+		}
+	}
+	return arr;
 
+}
 function genCards(numPairs){
-	var symbols = [ '\u00A9', '\u265E', '\u222F', '\u05EA', '\u262F' , '\u1C16', '\u267B' ,  '\u3037'];
+	var symbols = [ '\u00A9', '\u265E', '\u222F', '\u05EA', '\u262F' , '\u00A5', '\u267B' ,  '\u20AC'];
+	symbols = shuffleArray(symbols);
 	var deck = [];
 	var y = 0;
 	for(var i = 0; i < numPairs*2; i++){
 
 		if( i == numPairs) y = 0;
-		var newCard = eleCreate('div', '', 'card', null, null);
-		newCard.style = 'width:70px;height:70px;border-radius: 25px;text-align: center;vertical-align:center;line-height: 70px; box-shadow: 10px 10px 5px #888888;border:3px solid #000; display: inline-block; float: left; margin: 5px; background-color : #ff0';
+		var newCard = elemCreate('div', {class:'card'}, null);
 		newCard.setAttribute('symbol', symbols[y]);
 		newCard.setAttribute('match', 'false');
-		var copyCard = newCard;
 		deck.push(newCard);
 		y++;
 	}
-	console.log(deck);
 	return deck;
 };
 
@@ -42,11 +61,10 @@ var shuffle = function(deck){
 };
 
 
-function placeCards(deck){
+function placeCards(deck, board){
 	deck = shuffle(deck);
 	for(var i = 0; i < deck.length; i++){
-		document.getElementById('gameBoard').appendChild(deck[i]);
-		console.log(deck[i]);
+		board.appendChild(deck[i]);
 	}
 };
 
@@ -58,10 +76,7 @@ function game(numPairs){
 	var secCard;
 
 	var checkMatches = function(fC,sC){
-			console.log(fC);
 			if(fC.getAttribute('symbol') === sC.getAttribute('symbol')){
-				console.log(fC);
-				console.log(sC);
 				fC.setAttribute('match', 'true');
 				sC.setAttribute('match', 'true');
 				fC.removeEventListener('click', reveal);
@@ -69,7 +84,6 @@ function game(numPairs){
 				matches ++;
 			}
 			else{
-				console.log('NO match');
 				fC.textContent = " ";
 				sC.textContent = " ";
 				fC.addEventListener('click', reveal);
@@ -78,8 +92,6 @@ function game(numPairs){
 			flips = 0;
 			guesses++;
 			updateGuess(guesses);
-			console.log('Matches = ' + matches);
-			console.log('numPairs= ' + numPairs);
 			if(matches == numPairs){
 				end();
 			}
@@ -97,7 +109,6 @@ function game(numPairs){
 			firstCard = this;
 			flips = 1;
 		}
-		console.log(flips);
 	};
 	var addListener = function(parent){
 		for( var i = 0; i < parent.childNodes.length; i++){
@@ -109,57 +120,46 @@ function game(numPairs){
 		addListener(document.getElementById('gameBoard'));
 };
 function guessLine(){
-		var line = document.createElement('div');
-	line.id = 'guessLine';
-	line.textContent = 'You Have Made ' + 0 + ' Guesses';
+		var line = elemCreate('div',{id:'guessLine'}, 'You Have Made ' + 0 + ' Guesses');
 	document.getElementById('game').appendChild(line);
 };
 function updateGuess(n){
 	document.getElementById('guessLine').textContent = 'You Have Made ' + n + ' Guesses';
 };
 function end(){
-	var endLine = eleCreate( 'div', 'end', 'ender', 'THANKS 4 PALLYING BUD!!!')
+	var endLine = elemCreate( 'div',{id: 'end', class:'ender'}, 'THANKS 4 PLYING BUD!!!')
 	document.getElementById('game').parentNode.insertBefore(endLine, document.getElementById('game'));
 	document.getElementById('game').remove();
 };
 function addCSS(){
-	var newElement = document.createElement('link');
+	var newElement = elemCreate('link',{});
 	newElement.rel = 'stylesheet';
 	newElement.href= 'styles.css';
 	document.getElementsByTagName('html')[0].insertBefore(newElement, document.getElementsByTagName('body')[0]);
 };
-
-function main(){
-	var kar = document.getElementById('numSymbols').value; 	
-	var wid = 0;
-	if(kar > 8){
-		kar = 8;
-	};
-	if(kar > 4){
+function calcWidth(numPairs){
+	if(numPairs > 4){
 		wid = 4;
 	}
 	else{
-		wid = kar;
+		wid = numPairs;
 	}
-	var hei = (50 * kar) + ''; 
-	var boardW = ((wid/2)*180) + '';
-	console.log(boardW);
-	document.getElementById('startForm').remove();
-	guessLine();
-	var board = eleCreate( 'div','gameBoard', null, null);
-	board.style = 'width:' + boardW + 'px;height:'+hei+'px;border:1px solid #000; border-radius: 25px; margin-left: auto; margin-right: auto';
-	document.getElementById('game').appendChild(board);
-
-	var deck = genCards(kar);
-	placeCards(deck);
-	game(kar);
-
-	console.log(board.attributes);
-
-
-
+	return ((wid/2)*180) + '';
 };
 
-addCSS();
+function main(){
+	var numPairs = document.getElementById('numSymbols').value; 
+	if(numPairs > 8){
+		numPairs = 8;
+	};
+	document.getElementById('startForm').remove();
+	guessLine();
+	var board = elemCreate( 'div',{id:'gameBoard', style:'width:' + calcWidth(numPairs) + 'px'});
+	document.getElementById('game').appendChild(board);
 
+	var deck = genCards(numPairs);
+	placeCards(deck, board);
+	game(numPairs);
+};
+addCSS();
 document.getElementById('startButton').addEventListener('click', main);
